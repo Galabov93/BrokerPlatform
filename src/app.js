@@ -1,3 +1,4 @@
+require('dotenv').config();
 const path = require('path');
 const favicon = require('serve-favicon');
 const compress = require('compression');
@@ -40,15 +41,54 @@ app.get(
         try {
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
-            console.log('TCL: page', page);
-
             // we want to login to this page using credentials
-            await page.goto(
-                'https://www.imot.bg/pcgi/imot.cgi?act=26&logact=1'
-            );
-            console.log('go');
+            await page.goto(process.env.CANDY_SIGN_IN_URL, {
+                waitUntil: 'networkidle0',
+            });
+
+            await page.waitForSelector('.vhodOptions input:first-of-type');
+
+            await page.evaluate(() => {
+                // eslint-disable-next-line no-undef
+                document
+                    .querySelector('.vhodOptions input:first-of-type')
+                    .click();
+            });
+
+            await page.waitFor('input[name="usr"]');
+            await page.type('input[name="usr"]', process.env.CANDY_USERNAME);
+
+            await page.waitFor('input[name="pwd"]');
+            await page.type('input[name="pwd"]', process.env.CANDY_PASSWORD);
+
+            await Promise.all([
+                page.click('.loginButton'),
+                page.waitForNavigation({ waitUntil: 'networkidle0' }),
+            ]);
+
+            await page.goto(process.env.CANDY_CUSTOM_FILTERS, {
+                waitUntil: 'networkidle0',
+            });
+
+            await Promise.all([
+                page.click('.startFilter'),
+                page.waitForNavigation({ waitUntil: 'networkidle0' }),
+            ]);
+
+            const links = await page.evaluate(() => {
+                const links = Array.from(
+                    // eslint-disable-next-line no-undef
+                    document.querySelectorAll('.photoLink')
+                ).map(link => `https:${link.getAttribute('href')}`);
+                return links;
+            });
+
+            console.log('links', links);
+
             await page.screenshot({ path: './test.png' });
-            res.send('baiko');
+
+            await browser.close();
+            res.send('Success');
         } catch (error) {
             console.log('error puppet', error);
         }
