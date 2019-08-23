@@ -26,6 +26,8 @@ const sequelize = require('./sequelize');
 const fs = require('fs');
 const request = require('request');
 
+const authentication = require('./authentication');
+
 const app = express(feathers());
 
 const S3_BUCKET = process.env.S3_BUCKET;
@@ -162,6 +164,7 @@ app.configure(express.rest());
 app.configure(sequelize);
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
+app.configure(authentication);
 // Set up our services (see `services/index.js`)
 app.configure(services);
 // Set up event channels (see channels.js)

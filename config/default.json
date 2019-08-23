@@ -5,5 +5,30 @@
   "paginate": {
     "default": 10,
     "max": 50
-  }
+  },
+  "authentication": {
+    "secret": "dbffa526633b7c8b05bac961e0b9a58222a8d8179adea86307818295563fe7f2b018dd62be0067244dd1f8d8a5f802e9aa35e8d98f6521356bac2e3f70dea9ebf03ede36abd9b6622058a1edb4d1f368b83121449188037f82cc14e96d0243d68d1a23e27184f94f61d7db3e715d00d265553488273fb48a23e8027b4071f74b48100b344948e443be5b813f04b57246d38bad1db668ca1c3fc6c5b0fae44bebf852ba4abd78a7bfb27f2edd84fffed0d8a17d9cfa9b95e650a8319b40e4a0280c3a9c68dfe89d01f00f7f83bfeaab16d17bf10652026e597f4cd5b0b7bcb840dd7a3e533986200b0a1982f1fac1beb0dd333e48c24b68036ba10963149b41b5",
+    "strategies": [
+      "jwt",
+      "local"
+    ],
+    "path": "/authentication",
+    "service": "users",
+    "jwt": {
+      "header": {
+        "typ": "access"
+      },
+      "audience": "https://yourdomain.com",
+      "subject": "anonymous",
+      "issuer": "feathers",
+      "algorithm": "HS256",
+      "expiresIn": "1d"
+    },
+    "local": {
+      "entity": "user",
+      "usernameField": "email",
+      "passwordField": "password"
+    }
+  },
+  "mysql": "mysql://ltix3632vild2yeh:lisfuhmxibsky5s2@ivgz2rnl5rh7sphb.chr7pe7iynqr.eu-west-1.rds.amazonaws.com:3306/tlcdqccvunmcmgfw"
 }
