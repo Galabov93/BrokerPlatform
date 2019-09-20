@@ -30,6 +30,7 @@ const app = express(feathers());
 const {
     getRealEstateImageLinks,
     uploadImagesToS3Bucket,
+    getRealEstateNameIds,
     getRealEstateType,
 } = require('./helpers/scraper');
 
@@ -56,21 +57,35 @@ const testLinks = [
 // real_estates_id  ---> done
 // real_estates_sell_type ---> done
 // real_estates_type --> done
-// real_estates_construction_type
-// real_estates_tec
+// real_estates_construction_type --> done
+// real_estates_tec --> done
 // real_estates_title ---> done
 // real_estates_city --> done
-// real_estates_address
+// real_estates_address --> done
 // real_estates_price --> done
 // real_estates_currency --> get it from the price string
 // real_estates_price_per_square --> done
-// real_estates_size
-// real_estates_floor
-// real_estates_description
+// real_estates_squareFootage --> done
+// real_estates_floor --> done
+// real_estates_description --> done
 // real_estates_thumbnail_images --> done
 // real_estates_big_images --> done
-// real_estates_seller_phone_number
-// real_estates_website_source
+// real_estates_seller_phone_number ---> done
+// real_estates_website_source --> done
+
+function getScraperConfiguration(linkToBeScraped) {
+    return {
+        uri: linkToBeScraped,
+        method: 'GET',
+        encoding: 'binary',
+        transform: function(body) {
+            body = Buffer.from(body, 'binary');
+            let conv = new iconv.Iconv('windows-1251', 'utf8');
+            body = conv.convert(body).toString();
+            return cheerio.load(body);
+        },
+    };
+}
 
 app.get(
     '/testScraper',
@@ -82,28 +97,15 @@ app.get(
                 puppeteer,
                 linkToBeScraped
             );
+            console.log('TCL: photosLinks', photosLinks);
+            const scraperOptions = getScraperConfiguration(linkToBeScraped);
+            const $ = await rp(scraperOptions);
 
-            const scraperOptions = {
-                uri: linkToBeScraped,
-                method: 'GET',
-                encoding: 'binary',
-                transform: function(body) {
-                    body = Buffer.from(body, 'binary');
-                    let conv = new iconv.Iconv('windows-1251', 'utf8');
-                    body = conv.convert(body).toString();
-                    return cheerio.load(body);
-                },
-            };
-
+            const sellType = 'rent';
             const realEstateId = linkToBeScraped
                 .split('&')
                 .find(element => element.includes('adv'))
                 .split('=')[1];
-            const sellType = 'rent';
-
-            const $ = await rp(scraperOptions);
-
-            await uploadImagesToS3Bucket(photosLinks, realEstateId);
 
             const title = $('form')
                 .attr('name', 'search')
@@ -119,21 +121,63 @@ app.get(
                 .find('b')
                 .text();
 
-            console.log('TCL: address', address);
-            console.log('TCL: city', city);
-            console.log('TCL: realEstateType', realEstateType);
+            const websiteSource = 'imot.bg';
+
+            // eslint-disable-next-line quotes
+            const squareFootage = $("td:contains('Квадратура')")
+                .last()
+                .next()
+                .children()
+                .text();
+
+            // eslint-disable-next-line quotes
+            const floor = $("td:contains('Етаж')")
+                .last()
+                .next()
+                .children()
+                .text();
+
+            // eslint-disable-next-line quotes
+            const phone = $("td:contains('Телефон')")
+                .last()
+                .next()
+                .children()
+                .text();
+
+            // boolean tec
+            // eslint-disable-next-line quotes
+            const tec = $("td:contains('ТEЦ:')")
+                .last()
+                .next()
+                .children()
+                .text();
 
             const totalPrice = $('#cena').text();
             const pricePerSquareMeter = $('#cenakv').text();
             const descriptionDiv = $('#description_div').text();
 
-            console.log('TCL: sellType', sellType);
-            console.log('TCL: realEstateId', realEstateId);
+            // await uploadImagesToS3Bucket(photosLinks, realEstateId);
+            const photoIds = getRealEstateNameIds(photosLinks, realEstateId);
+            console.log('TCL: photoIds', photoIds);
 
-            console.log('TCL: title', title);
-            console.log('TCL: totalPrice', totalPrice);
-            console.log('TCL: descriptionDiv', descriptionDiv);
-            console.log('TCL: pricePerSquareMeter', pricePerSquareMeter);
+            // console.log('TCL: websiteSource', websiteSource);
+            // console.log('TCL: squareFootage', squareFootage);
+            // console.log('TCL: floor', floor);
+
+            // console.log('TCL: phone', phone);
+            // console.log('TCL: sellType', sellType);
+            // console.log('TCL: address', address);
+            // console.log('TCL: city', city);
+            // console.log('TCL: realEstateType', realEstateType);
+
+            // console.log('TCL: tec', tec);
+            // console.log('TCL: sellType', sellType);
+            // console.log('TCL: realEstateId', realEstateId);
+
+            // console.log('TCL: title', title);
+            // console.log('TCL: totalPrice', totalPrice);
+            // console.log('TCL: descriptionDiv', descriptionDiv);
+            // console.log('TCL: pricePerSquareMeter', pricePerSquareMeter);
 
             res.send('Success');
         } catch (error) {
