@@ -13,14 +13,12 @@ module.exports = function(app) {
                 allowNull: false,
             },
             real_estates_sell_type: {
+                // rent or by
                 type: DataTypes.STRING,
                 allowNull: false,
             },
             real_estates_construction_type: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            real_estates_type: {
+                // 1-Стаен, 2-стаен и т.н
                 type: DataTypes.STRING,
                 allowNull: false,
             },
@@ -73,6 +71,10 @@ module.exports = function(app) {
                 allowNull: true,
             },
             real_estates_seller_phone_number: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            real_estates_created_by: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
