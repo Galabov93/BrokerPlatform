@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable no-console */
 require('dotenv').config();
 const path = require('path');
@@ -30,6 +31,7 @@ const app = express(feathers());
 const {
     getRealEstateImageLinks,
     uploadImagesToS3Bucket,
+    getRealEstateNeighborhood,
     getRealEstateNameIds,
     getRealEstateType,
 } = require('./helpers/scraper');
@@ -51,27 +53,45 @@ const asyncMiddleware = fn => (req, res, next) => {
 };
 
 const testLinks = [
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156621419843728&slink=4sro96&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156544901411455&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156751853870763&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156682201473131&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156864576256791&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156897581885400&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156869949814193&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156862487090849&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156675956118638&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156879162951646&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h154823736720085&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h153994587637584&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h155922434929591&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h156397757079571&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2k156820114792554&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2m155941819522603&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2m156689384668590&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156820824079225&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156858567634282&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a155815870920769&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156388883718689&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156878704466899&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156819205260566&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156743098200519&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156893116720842&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156909176257364&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156810139004916&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156699145723420&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156707356895254&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156777254669016&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156733569430660&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156892477616608&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156741498740009&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156808107708048&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156914438072932&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156836155446144&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156817024394545&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156887157903241&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156280122143766&slink=4uycmp&f1=1',
 ];
-
-// real_estates_id  ---> done
-// real_estates_sell_type ---> done
-// real_estates_type --> done
-// real_estates_construction_type --> done
-// real_estates_tec --> done
-// real_estates_title ---> done
-// real_estates_city --> done
-// real_estates_address --> done
-// real_estates_price --> done
-// real_estates_currency --> get it from the price string
-// real_estates_price_per_square --> done
-// real_estates_squareFootage --> done
-// real_estates_floor --> done
-// real_estates_description --> done
-// real_estates_thumbnail_images --> done
-// real_estates_big_images --> done
-// real_estates_seller_phone_number ---> done
-// real_estates_website_source --> done
 
 function getScraperConfiguration(linkToBeScraped) {
     return {
@@ -87,97 +107,196 @@ function getScraperConfiguration(linkToBeScraped) {
     };
 }
 
+async function getScrapedData(linkToBeScraped) {
+    const photosLinks = await getRealEstateImageLinks(
+        puppeteer,
+        linkToBeScraped
+    );
+    const scraperOptions = getScraperConfiguration(linkToBeScraped);
+    const $ = await rp(scraperOptions);
+
+    const realEstateId = linkToBeScraped
+        .split('&')
+        .find(element => element.includes('adv'))
+        .split('=')[1];
+
+    const title = $('form')
+        .attr('name', 'search')
+        .children('table')
+        .first()
+        .find('h1')
+        .text();
+
+    const sellType = 'rent';
+    const constructionType = getRealEstateType(title);
+    const neighborhood = getRealEstateNeighborhood(title);
+
+    const city = title.split(',')[1];
+    const address = $('h2:contains("Местоположение")')
+        .find('b')
+        .text();
+
+    const websiteSource = 'imot.bg';
+
+    // eslint-disable-next-line quotes
+    const squareFootageSize = $("td:contains('Квадратура')")
+        .last()
+        .next()
+        .children()
+        .text();
+
+    // eslint-disable-next-line quotes
+    const floor = $("td:contains('Етаж')")
+        .last()
+        .next()
+        .children()
+        .text();
+
+    // eslint-disable-next-line quotes
+    const phone = $("td:contains('Телефон')")
+        .last()
+        .next()
+        .children()
+        .text();
+
+    // boolean tec
+    // eslint-disable-next-line quotes
+    const tec = $("td:contains('ТEЦ:')")
+        .last()
+        .next()
+        .children()
+        .text();
+
+    const phoneNumber = $("strong:contains('За контакти:')")
+        .next()
+        .next()
+        .text();
+
+    let commaSeparatedFeaturesText = '';
+    const featuresDivs = $("div:contains('Особености:')")
+        .last()
+        .next()
+        .children()
+        .children()
+        .children()
+        .children();
+    featuresDivs.each(function(index) {
+        if (index !== featuresDivs.length - 1) {
+            commaSeparatedFeaturesText += `${$(this)
+                .text()
+                .replace('\u2022', '')},`;
+        } else {
+            commaSeparatedFeaturesText += `${$(this)
+                .text()
+                .replace('\u2022', '')}`;
+        }
+    });
+
+    const totalPrice = $('#cena').text();
+    const pricePerSquareMeter = $('#cenakv').text();
+
+    const possibleCurrencies = {
+        euro: 'EUR',
+        leva: 'BGN',
+        dollar: 'USD',
+    };
+
+    function getOriginalCurrency(originalCurrencyPrice) {
+        if (originalCurrencyPrice.includes('лв')) {
+            return possibleCurrencies.leva;
+        } else if (originalCurrencyPrice.includes('EUR')) {
+            return possibleCurrencies.euro;
+        } else {
+            return possibleCurrencies.dollar;
+        }
+    }
+
+    function getPriceInEuro(originalCurrencyPrice) {
+        function convert(originalCurrencyPrice) {
+            // Using replace() method
+            // to make currency string suitable
+            // for parseFloat() to convert
+            const temp = originalCurrencyPrice.replace(/[^0-9.-]+/g, '');
+
+            // Converting string to float
+            // or double and return
+            return parseFloat(temp);
+        }
+
+        if (
+            getOriginalCurrency(originalCurrencyPrice) ===
+            possibleCurrencies.euro
+        ) {
+            return convert(originalCurrencyPrice);
+        } else if (
+            getOriginalCurrency(originalCurrencyPrice) ===
+            possibleCurrencies.leva
+        ) {
+            return convert(originalCurrencyPrice) * 2;
+        }
+    }
+
+    const totalPriceInEuro = getPriceInEuro(totalPrice);
+    const pricePerSquareMeterInEuro = getPriceInEuro(pricePerSquareMeter);
+
+    const realEstateDescription = $('#description_div').text();
+
+    // await uploadImagesToS3Bucket(photosLinks, realEstateId);
+    const photoIds = getRealEstateNameIds(photosLinks, realEstateId);
+    const createdBy = 'Manata';
+
+    return {
+        real_estates_id: realEstateId,
+        real_estates_sell_type: sellType,
+        real_estates_construction_type: constructionType,
+        real_estates_tec: tec,
+        real_estates_phone: phone,
+        real_estates_title: title,
+        real_estates_neighborhood: neighborhood,
+        real_estates_city: city,
+        real_estates_address: address,
+        real_estates_original_price: totalPrice,
+        real_estates_price_in_euro: totalPriceInEuro,
+        real_estates_currency: getOriginalCurrency(totalPrice),
+        real_estates_price_per_square: pricePerSquareMeter,
+        real_estates_price_per_square_in_euro: pricePerSquareMeterInEuro,
+        real_estates_size: squareFootageSize,
+        real_estates_floor: floor,
+        real_estates_description: realEstateDescription,
+        real_estates_imageNames: 'imageg1,image2,image3',
+        real_estates_seller_phone_number: phoneNumber,
+        real_estates_seller_features: commaSeparatedFeaturesText,
+        real_estates_website_source: websiteSource,
+        real_estates_created_by: createdBy,
+    };
+}
+
+async function postDataToDb(dataObject) {
+    const sequelize = app.get('sequelizeClient');
+    const { real_estates } = sequelize.models;
+
+    try {
+        await real_estates.create(dataObject);
+        console.log('Success updating database');
+    } catch (e) {
+        console.log('Error creating record', e);
+    }
+}
+
 app.get(
     '/testScraper',
     asyncMiddleware(async (req, res) => {
         try {
-            const linkToBeScraped = testLinks[0];
+            //event emitter --> run function on get new links
+            for (let index = 0; index < 10; index++) {
+                // const element = array[index];
 
-            const photosLinks = await getRealEstateImageLinks(
-                puppeteer,
-                linkToBeScraped
-            );
-            console.log('TCL: photosLinks', photosLinks);
-            const scraperOptions = getScraperConfiguration(linkToBeScraped);
-            const $ = await rp(scraperOptions);
+                const linkToBeScraped = testLinks[index];
 
-            const sellType = 'rent';
-            const realEstateId = linkToBeScraped
-                .split('&')
-                .find(element => element.includes('adv'))
-                .split('=')[1];
+                const realEstateData = await getScrapedData(linkToBeScraped);
 
-            const title = $('form')
-                .attr('name', 'search')
-                .children('table')
-                .first()
-                .find('h1')
-                .text();
-
-            const realEstateType = getRealEstateType(title);
-
-            const city = title.split(',')[1];
-            const address = $('h2:contains("Местоположение")')
-                .find('b')
-                .text();
-
-            const websiteSource = 'imot.bg';
-
-            // eslint-disable-next-line quotes
-            const squareFootage = $("td:contains('Квадратура')")
-                .last()
-                .next()
-                .children()
-                .text();
-
-            // eslint-disable-next-line quotes
-            const floor = $("td:contains('Етаж')")
-                .last()
-                .next()
-                .children()
-                .text();
-
-            // eslint-disable-next-line quotes
-            const phone = $("td:contains('Телефон')")
-                .last()
-                .next()
-                .children()
-                .text();
-
-            // boolean tec
-            // eslint-disable-next-line quotes
-            const tec = $("td:contains('ТEЦ:')")
-                .last()
-                .next()
-                .children()
-                .text();
-
-            const totalPrice = $('#cena').text();
-            const pricePerSquareMeter = $('#cenakv').text();
-            const descriptionDiv = $('#description_div').text();
-
-            // await uploadImagesToS3Bucket(photosLinks, realEstateId);
-            const photoIds = getRealEstateNameIds(photosLinks, realEstateId);
-            console.log('TCL: photoIds', photoIds);
-
-            // console.log('TCL: websiteSource', websiteSource);
-            // console.log('TCL: squareFootage', squareFootage);
-            // console.log('TCL: floor', floor);
-
-            // console.log('TCL: phone', phone);
-            // console.log('TCL: sellType', sellType);
-            // console.log('TCL: address', address);
-            // console.log('TCL: city', city);
-            // console.log('TCL: realEstateType', realEstateType);
-
-            // console.log('TCL: tec', tec);
-            // console.log('TCL: sellType', sellType);
-            // console.log('TCL: realEstateId', realEstateId);
-
-            // console.log('TCL: title', title);
-            // console.log('TCL: totalPrice', totalPrice);
-            // console.log('TCL: descriptionDiv', descriptionDiv);
-            // console.log('TCL: pricePerSquareMeter', pricePerSquareMeter);
+                await postDataToDb(realEstateData);
+            }
 
             res.send('Success');
         } catch (error) {
@@ -185,25 +304,6 @@ app.get(
         }
     })
 );
-
-// Set up Plugins and providers
-app.configure(express.rest());
-app.configure(sequelize);
-// Configure other middleware (see `middleware/index.js`)
-app.configure(middleware);
-app.configure(authentication);
-// Set up our services (see `services/index.js`)
-app.configure(services);
-// Set up event channels (see channels.js)
-app.configure(channels);
-
-// Configure a middleware for 404s and the error handler
-app.use(express.notFound());
-app.use(express.errorHandler({ logger }));
-
-app.hooks(appHooks);
-
-module.exports = app;
 
 app.get(
     '/loginAndGetLinks',
@@ -253,6 +353,7 @@ app.get(
                 return links;
             });
 
+            // event emitter emit new links arrived
             console.log('links', links);
 
             await page.screenshot({ path: './test.png' });
@@ -264,3 +365,22 @@ app.get(
         }
     })
 );
+
+// Set up Plugins and providers
+app.configure(express.rest());
+app.configure(sequelize);
+// Configure other middleware (see `middleware/index.js`)
+app.configure(middleware);
+app.configure(authentication);
+// Set up our services (see `services/index.js`)
+app.configure(services);
+// Set up event channels (see channels.js)
+app.configure(channels);
+
+// Configure a middleware for 404s and the error handler
+app.use(express.notFound());
+app.use(express.errorHandler({ logger }));
+
+app.hooks(appHooks);
+
+module.exports = app;

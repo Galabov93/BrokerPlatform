@@ -22,11 +22,11 @@ module.exports = function(app) {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            real_estates_tec: {
-                type: DataTypes.BOOLEAN,
+            real_estates_title: {
+                type: DataTypes.STRING,
                 allowNull: false,
             },
-            real_estates_title: {
+            real_estates_neighborhood: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
@@ -38,16 +38,26 @@ module.exports = function(app) {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            real_estates_price: {
+            real_estates_original_price: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            real_estates_price_in_euro: {
+                // will be used for filtering
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
             real_estates_currency: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             real_estates_price_per_square: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            real_estates_price_per_square_in_euro: {
+                // will be used for filtering
+                type: DataTypes.DOUBLE,
                 allowNull: false,
             },
             real_estates_size: {
@@ -58,19 +68,32 @@ module.exports = function(app) {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            real_estates_tec: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+            },
+            real_estates_phone: {
+                // is there phone or not
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+            },
             real_estates_description: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            real_estates_thumbnail_images: {
+            real_estates_imageNames: {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            real_estates_big_images: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
+            // real_estates_big_images: {
+            //     type: DataTypes.STRING,
+            //     allowNull: true,
+            // },
             real_estates_seller_phone_number: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            real_estates_seller_features: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
