@@ -53,44 +53,7 @@ const asyncMiddleware = fn => (req, res, next) => {
 };
 
 const testLinks = [
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156544901411455&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156751853870763&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156682201473131&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156864576256791&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156897581885400&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156869949814193&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156862487090849&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156675956118638&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156879162951646&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h154823736720085&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h153994587637584&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h155922434929591&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h156397757079571&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2k156820114792554&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2m155941819522603&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2m156689384668590&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156820824079225&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156858567634282&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a155815870920769&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156388883718689&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156878704466899&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156819205260566&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156743098200519&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156893116720842&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156909176257364&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156810139004916&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156699145723420&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156707356895254&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156777254669016&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156733569430660&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156892477616608&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156741498740009&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156808107708048&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156914438072932&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156836155446144&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156817024394545&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156887157903241&slink=4uycmp&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2a156280122143766&slink=4uycmp&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156986493590618&slink=4vvs1h&f1=1',
 ];
 
 function getScraperConfiguration(linkToBeScraped) {
@@ -241,7 +204,7 @@ async function getScrapedData(linkToBeScraped) {
 
     const realEstateDescription = $('#description_div').text();
 
-    // await uploadImagesToS3Bucket(photosLinks, realEstateId);
+    await uploadImagesToS3Bucket(photosLinks, realEstateId);
     const photoIds = getRealEstateNameIds(photosLinks, realEstateId);
     const createdBy = 'Manata';
 

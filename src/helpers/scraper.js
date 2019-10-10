@@ -77,18 +77,18 @@ async function uploadImagesToS3Bucket(links, realEstateId) {
         const imageLinks = links[index];
 
         const imageName = getImageName(imageLinks.thumbPhoto);
-        if (index === 0) {
-            await saveImageToS3Bucket(
-                imageLinks.thumbPhoto,
-                s3ImageFolderPath('thumb', realEstateId),
-                imageName
-            );
-            await saveImageToS3Bucket(
-                imageLinks.bigPhoto,
-                s3ImageFolderPath('big', realEstateId),
-                imageName
-            );
-        }
+        // if (index === 0) {
+        await saveImageToS3Bucket(
+            imageLinks.thumbPhoto,
+            s3ImageFolderPath('thumb', realEstateId),
+            imageName
+        );
+        await saveImageToS3Bucket(
+            imageLinks.bigPhoto,
+            s3ImageFolderPath('big', realEstateId),
+            imageName
+        );
+        // }
     }
 }
 
