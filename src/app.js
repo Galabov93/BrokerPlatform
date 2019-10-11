@@ -53,7 +53,7 @@ const asyncMiddleware = fn => (req, res, next) => {
 };
 
 const testLinks = [
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d156986493590618&slink=4vvs1h&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h155922434929591&slink=4wi64o&f1=1',
 ];
 
 function getScraperConfiguration(linkToBeScraped) {
@@ -68,6 +68,17 @@ function getScraperConfiguration(linkToBeScraped) {
             return cheerio.load(body);
         },
     };
+}
+
+function convertPriceStringToNumber(originalCurrencyPrice) {
+    // Using replace() method
+    // to make currency string suitable
+    // for parseFloat() to convert
+    const temp = originalCurrencyPrice.replace(/[^0-9.-]+/g, '');
+
+    // convert string to float
+    // or double and return
+    return parseFloat(temp);
 }
 
 async function getScrapedData(linkToBeScraped) {
@@ -94,7 +105,10 @@ async function getScrapedData(linkToBeScraped) {
     const constructionType = getRealEstateType(title);
     const neighborhood = getRealEstateNeighborhood(title);
 
-    const city = title.split(',')[1];
+    const city = title
+        .split(',')[1]
+        .replace('град', '')
+        .trim();
     const address = $('h2:contains("Местоположение")')
         .find('b')
         .text();
@@ -155,8 +169,12 @@ async function getScrapedData(linkToBeScraped) {
         }
     });
 
-    const totalPrice = $('#cena').text();
-    const pricePerSquareMeter = $('#cenakv').text();
+    const totalPrice = $('#cena')
+        .text()
+        .trim();
+    const pricePerSquareMeter = $('#cenakv')
+        .text()
+        .trim();
 
     const possibleCurrencies = {
         euro: 'EUR',
@@ -175,27 +193,16 @@ async function getScrapedData(linkToBeScraped) {
     }
 
     function getPriceInEuro(originalCurrencyPrice) {
-        function convert(originalCurrencyPrice) {
-            // Using replace() method
-            // to make currency string suitable
-            // for parseFloat() to convert
-            const temp = originalCurrencyPrice.replace(/[^0-9.-]+/g, '');
-
-            // Converting string to float
-            // or double and return
-            return parseFloat(temp);
-        }
-
         if (
             getOriginalCurrency(originalCurrencyPrice) ===
             possibleCurrencies.euro
         ) {
-            return convert(originalCurrencyPrice);
+            return convertPriceStringToNumber(originalCurrencyPrice);
         } else if (
             getOriginalCurrency(originalCurrencyPrice) ===
             possibleCurrencies.leva
         ) {
-            return convert(originalCurrencyPrice) * 2;
+            return convertPriceStringToNumber(originalCurrencyPrice) * 2;
         }
     }
 
@@ -218,7 +225,7 @@ async function getScrapedData(linkToBeScraped) {
         real_estates_neighborhood: neighborhood,
         real_estates_city: city,
         real_estates_address: address,
-        real_estates_original_price: totalPrice,
+        real_estates_original_price: convertPriceStringToNumber(totalPrice),
         real_estates_price_in_euro: totalPriceInEuro,
         real_estates_currency: getOriginalCurrency(totalPrice),
         real_estates_price_per_square: pricePerSquareMeter,
@@ -235,11 +242,9 @@ async function getScrapedData(linkToBeScraped) {
 }
 
 async function postDataToDb(dataObject) {
-    const sequelize = app.get('sequelizeClient');
-    const { real_estates } = sequelize.models;
-
     try {
-        await real_estates.create(dataObject);
+        const response = await app.service('real-estates').create(dataObject);
+        console.log('TCL: postDataToDb -> response', response);
         console.log('Success updating database');
     } catch (e) {
         console.log('Error creating record', e);
@@ -251,9 +256,7 @@ app.get(
     asyncMiddleware(async (req, res) => {
         try {
             //event emitter --> run function on get new links
-            for (let index = 0; index < 10; index++) {
-                // const element = array[index];
-
+            for (let index = 0; index < testLinks.length; index++) {
                 const linkToBeScraped = testLinks[index];
 
                 const realEstateData = await getScrapedData(linkToBeScraped);
