@@ -31,38 +31,42 @@ async function saveImageToS3Bucket(url, newFolder = '', filename = 'newImage') {
 }
 
 async function getRealEstateImageLinks(puppeteer, linkToBeScraped) {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    try {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
 
-    await page.goto(linkToBeScraped, {
-        waitUntil: 'networkidle0',
-    });
+        await page.goto(linkToBeScraped, {
+            waitUntil: 'networkidle0',
+        });
 
-    const links = await page.evaluate(() => {
-        // eslint-disable-next-line no-undef
-        let thumbsLinks = document.querySelectorAll('.thmbsLi a'); //select image links
-        let arr = [];
-        for (let index = 0; index < thumbsLinks.length; index++) {
-            let thumbAndBigPhotoPair = { thumbPhoto: '', bigPhoto: '' };
+        const links = await page.evaluate(() => {
             // eslint-disable-next-line no-undef
-            const thumbPhoto = document
-                .querySelector(`#small_pic_${index}`)
-                .getAttribute('src');
+            let thumbsLinks = document.querySelectorAll('.thmbsLi a'); //select image links
+            let arr = [];
+            for (let index = 0; index < thumbsLinks.length; index++) {
+                let thumbAndBigPhotoPair = { thumbPhoto: '', bigPhoto: '' };
+                // eslint-disable-next-line no-undef
+                const thumbPhoto = document
+                    .querySelector(`#small_pic_${index}`)
+                    .getAttribute('src');
 
-            //big photos are just with a different folder structure
-            const bigPhoto = thumbPhoto.replace('small', 'big');
+                //big photos are just with a different folder structure
+                const bigPhoto = thumbPhoto.replace('small', 'big');
 
-            thumbAndBigPhotoPair.thumbPhoto = `https:${thumbPhoto}`;
-            thumbAndBigPhotoPair.bigPhoto = `https:${bigPhoto}`;
+                thumbAndBigPhotoPair.thumbPhoto = `https:${thumbPhoto}`;
+                thumbAndBigPhotoPair.bigPhoto = `https:${bigPhoto}`;
 
-            arr.push(thumbAndBigPhotoPair);
-        }
-        return arr;
-    });
+                arr.push(thumbAndBigPhotoPair);
+            }
+            return arr;
+        });
 
-    await browser.close();
+        await browser.close();
 
-    return links;
+        return links;
+    } catch (e) {
+        console.error('Error getting puppeteer images', e);
+    }
 }
 
 /**
