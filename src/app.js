@@ -53,7 +53,14 @@ const asyncMiddleware = fn => (req, res, next) => {
 };
 
 const testLinks = [
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2h155922434929591&slink=4wi64o&f1=1',
+    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156966804523521&slink=4wm7li&f1=9',
+    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156641791196618&slink=4wm7li&f1=9',
+    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156692436199120&slink=4wm7li&f1=8',
+    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156293577825798&slink=4wm7li&f1=5',
+    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c153853243004380&slink=4wm7li&f1=4',
+    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c157074117806885&slink=4wm7li&f1=1',
+    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2e157018375004916&slink=4wm5pz&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d157168713460441&slink=4xk4yl&f1=1',
 ];
 
 function getScraperConfiguration(linkToBeScraped) {
@@ -257,6 +264,7 @@ app.get(
         try {
             //event emitter --> run function on get new links
             for (let index = 0; index < testLinks.length; index++) {
+                console.log('TCL: index', index);
                 const linkToBeScraped = testLinks[index];
 
                 const realEstateData = await getScrapedData(linkToBeScraped);

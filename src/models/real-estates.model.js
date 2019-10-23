@@ -69,12 +69,12 @@ module.exports = function(app) {
                 allowNull: true,
             },
             real_estates_tec: {
-                type: DataTypes.BOOLEAN,
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             real_estates_phone: {
                 // is there phone or not
-                type: DataTypes.BOOLEAN,
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             real_estates_description: {
