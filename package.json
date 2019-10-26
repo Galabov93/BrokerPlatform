@@ -44,7 +44,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "feathers-sequelize": "^4.1.1",
-    "helmet": "^3.18.0",
+    "helmet": "^3.21.2",
     "iconv": "^2.3.4",
     "mysql2": "^1.6.5",
     "puppeteer": "^1.18.0",
