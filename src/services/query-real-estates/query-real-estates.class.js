@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 const Sequelize = require('sequelize');
 
 function formatDataFromReactSelect(dataArray) {
@@ -12,13 +12,6 @@ class Service {
     }
 
     async find(params) {
-        // constructionType,
-        // neighbourhoods,
-        // priceFrom,
-        // priceTo,
-        // sizeFrom,
-        // sizeTo
-
         const { query } = params;
         const sequelize = this.app.get('sequelizeClient');
         const { real_estates } = sequelize.models;
@@ -36,60 +29,85 @@ class Service {
             }
         }
 
-        function getFiltersWhereIn(query, propertyName, databaseColumnName) {
+        function getNeighbourhoodFilter(query, propertyName) {
             if (!query[propertyName]) {
                 return {};
             } else {
                 return {
-                    databaseColumnName: {
+                    real_estates_neighborhood: {
                         [Op.in]: formatDataFromReactSelect(query[propertyName]),
                     },
                 };
             }
         }
 
-        function getFiltersWhereBetween(
-            query,
-            propertyName,
-            databaseColumnName
-        ) {
-            const fromValue = query[`from${propertyName}`] || 0;
-            const toValue = query[`to${propertyName}`] || 0;
-            if (!toValue) {
+        function getConstructionTypeFilter(query, propertyName) {
+            if (!query[propertyName]) {
                 return {};
             } else {
+                return {
+                    real_estates_construction_type: {
+                        [Op.in]: formatDataFromReactSelect(query[propertyName]),
+                    },
+                };
             }
         }
 
+        function getPriceFilter(query) {
+            const fromValue = Number(query.priceFrom) || 0;
+            const toValue = Number(query.priceTo) || 0;
+
+            if (!toValue) {
+                return {};
+            } else {
+                return {
+                    real_estates_price_in_euro: {
+                        [Op.between]: [fromValue, toValue],
+                    },
+                };
+            }
+        }
+
+        function getSizeFilter(query) {
+            const fromValue = Number(query.sizeFrom) || 0;
+            const toValue = Number(query.sizeTo) || 0;
+
+            if (!toValue) {
+                return {};
+            } else {
+                return {
+                    real_estates_size: {
+                        [Op.between]: [fromValue, toValue],
+                    },
+                };
+            }
+        }
+
+        const sizeFilter = getPriceFilter(query);
+        const priceFilter = getSizeFilter(query);
         const sellTypeFilter = getRealEstatesSellType(query);
-        const neighbourhoodsFilter = getFiltersWhereIn(
+        const neighbourhoodsFilter = getNeighbourhoodFilter(
             query,
-            'neighbourhoods',
-            'real_estates_neighborhood'
+            'neighbourhoods'
         );
-        const constructionTypeFilter = getFiltersWhereIn(
+        const constructionTypeFilter = getConstructionTypeFilter(
             query,
-            'constructionType',
-            'real_estates_construction_type'
+            'constructionType'
         );
 
-        const filteredData = await real_estates.findAll({
+        const { count, rows } = await real_estates.findAndCountAll({
+            limit: Number(query.limit),
+            offset: Number(query.offset),
             where: {
                 ...sellTypeFilter,
                 ...constructionTypeFilter,
                 ...neighbourhoodsFilter,
-                real_estates_price_in_euro: {
-                    [Op.between]: [0, 500],
-                },
-                real_estates_size: {
-                    [Op.between]: [0, 100],
-                },
-                // real_estates_construction_type: {},
-                // real_estates_seller_features
+                ...priceFilter,
+                ...sizeFilter,
             },
         });
 
-        return filteredData;
+        return { count, rows };
     }
 
     async get(id, params) {
