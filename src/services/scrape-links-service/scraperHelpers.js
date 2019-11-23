@@ -76,23 +76,16 @@ async function getRealEstateImageLinks(puppeteer, linkToBeScraped) {
  */
 
 async function uploadImagesToS3Bucket(links, realEstateId) {
-    // link
     for (let index = 0; index < links.length; index++) {
         const imageLinks = links[index];
 
         const imageName = getImageName(imageLinks.thumbPhoto);
-        // if (index === 0) {
-        await saveImageToS3Bucket(
-            imageLinks.thumbPhoto,
-            s3ImageFolderPath('thumb', realEstateId),
-            imageName
-        );
+
         await saveImageToS3Bucket(
             imageLinks.bigPhoto,
             s3ImageFolderPath('big', realEstateId),
             imageName
         );
-        // }
     }
 }
 
