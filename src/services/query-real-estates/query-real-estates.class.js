@@ -19,7 +19,7 @@ class Service {
 
         function getRealEstatesSellType(query) {
             if (!query.propertySellType) {
-                return {};
+                return null;
             } else {
                 return {
                     real_estates_sell_type: {
@@ -31,7 +31,7 @@ class Service {
 
         function getNeighbourhoodFilter(query, propertyName) {
             if (!query[propertyName]) {
-                return {};
+                return null;
             } else {
                 return {
                     real_estates_neighborhood: {
@@ -43,7 +43,7 @@ class Service {
 
         function getConstructionTypeFilter(query, propertyName) {
             if (!query[propertyName]) {
-                return {};
+                return null;
             } else {
                 return {
                     real_estates_construction_type: {
@@ -58,7 +58,7 @@ class Service {
             const toValue = Number(query.priceTo) || 0;
 
             if (!toValue) {
-                return {};
+                return null;
             } else {
                 return {
                     real_estates_price_in_euro: {
@@ -73,7 +73,7 @@ class Service {
             const toValue = Number(query.sizeTo) || 0;
 
             if (!toValue) {
-                return {};
+                return null;
             } else {
                 return {
                     real_estates_size: {
