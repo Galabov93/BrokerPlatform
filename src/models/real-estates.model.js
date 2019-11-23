@@ -72,6 +72,10 @@ module.exports = function(app) {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            real_estate_construction_material: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
             real_estates_phone: {
                 // is there phone or not
                 type: DataTypes.STRING,
@@ -85,10 +89,6 @@ module.exports = function(app) {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            // real_estates_big_images: {
-            //     type: DataTypes.STRING,
-            //     allowNull: true,
-            // },
             real_estates_seller_phone_number: {
                 type: DataTypes.STRING,
                 allowNull: false,

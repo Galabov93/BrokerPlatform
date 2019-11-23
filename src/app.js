@@ -53,14 +53,7 @@ const asyncMiddleware = fn => (req, res, next) => {
 };
 
 const testLinks = [
-    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156966804523521&slink=4wm7li&f1=9',
-    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156641791196618&slink=4wm7li&f1=9',
-    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156692436199120&slink=4wm7li&f1=8',
-    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c156293577825798&slink=4wm7li&f1=5',
-    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c153853243004380&slink=4wm7li&f1=4',
-    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2c157074117806885&slink=4wm7li&f1=1',
-    // 'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2e157018375004916&slink=4wm5pz&f1=1',
-    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=2d157168713460441&slink=4xk4yl&f1=1',
+    'https://www.imot.bg/pcgi/imot.cgi?act=5&adv=1b157443558385309',
 ];
 
 function getScraperConfiguration(linkToBeScraped) {
@@ -78,13 +71,7 @@ function getScraperConfiguration(linkToBeScraped) {
 }
 
 function convertPriceStringToNumber(originalCurrencyPrice) {
-    // Using replace() method
-    // to make currency string suitable
-    // for parseFloat() to convert
     const temp = originalCurrencyPrice.replace(/[^0-9.-]+/g, '');
-
-    // convert string to float
-    // or double and return
     return parseFloat(temp);
 }
 
@@ -146,6 +133,12 @@ async function getScrapedData(linkToBeScraped) {
     // boolean tec
     // eslint-disable-next-line quotes
     const tec = $("td:contains('ТEЦ:')")
+        .last()
+        .next()
+        .children()
+        .text();
+
+    const constructionMaterial = $("td:contains('Вид строителство:')")
         .last()
         .next()
         .children()
@@ -220,6 +213,7 @@ async function getScrapedData(linkToBeScraped) {
 
     await uploadImagesToS3Bucket(photosLinks, realEstateId);
     const photoIds = getRealEstateNameIds(photosLinks, realEstateId);
+    console.log('TCL: getScrapedData -> photoIds', photoIds);
     const createdBy = 'Manata';
 
     return {
@@ -227,6 +221,7 @@ async function getScrapedData(linkToBeScraped) {
         real_estates_sell_type: sellType,
         real_estates_construction_type: constructionType,
         real_estates_tec: tec,
+        real_estate_construction_material: constructionMaterial,
         real_estates_phone: phone,
         real_estates_title: title,
         real_estates_neighborhood: neighborhood,
@@ -240,7 +235,7 @@ async function getScrapedData(linkToBeScraped) {
         real_estates_size: squareFootageSize,
         real_estates_floor: floor,
         real_estates_description: realEstateDescription,
-        real_estates_imageNames: 'imageg1,image2,image3',
+        real_estates_imageNames: photoIds,
         real_estates_seller_phone_number: phoneNumber,
         real_estates_seller_features: commaSeparatedFeaturesText,
         real_estates_website_source: websiteSource,
@@ -264,7 +259,6 @@ app.get(
         try {
             //event emitter --> run function on get new links
             for (let index = 0; index < testLinks.length; index++) {
-                console.log('TCL: index', index);
                 const linkToBeScraped = testLinks[index];
 
                 const realEstateData = await getScrapedData(linkToBeScraped);

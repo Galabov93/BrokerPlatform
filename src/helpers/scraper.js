@@ -96,19 +96,17 @@ async function uploadImagesToS3Bucket(links, realEstateId) {
     }
 }
 
-async function getRealEstateNameIds(links, realEstateId) {
+function getRealEstateNameIds(links) {
     // thumbPhotos and bigPhotos
-    const photoIds = { thumbPhotos: '', bigPhotos: '' };
+    let photoIds = '';
     for (let index = 0; index < links.length; index++) {
         const imageLinks = links[index];
 
         const imageName = getImageName(imageLinks.thumbPhoto);
-        if (index !== links.length) {
-            photoIds.thumbPhotos += `${realEstateId}/thumbPhotos/${imageName},`;
-            photoIds.bigPhotos += `${realEstateId}/bigPhotos/${imageName},`;
+        if (index === links.length - 1) {
+            photoIds += `${imageName}`;
         } else {
-            photoIds.thumbPhotos += `${realEstateId}/thumbPhotos/${imageName}`;
-            photoIds.bigPhotos += `${realEstateId}/bigPhotos/${imageName}`;
+            photoIds += `${imageName},`;
         }
     }
 
