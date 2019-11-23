@@ -1,6 +1,9 @@
 /* eslint-disable no-console */
 const Axios = require('axios');
 const aws = require('aws-sdk');
+const cheerio = require('cheerio');
+const Buffer = require('buffer').Buffer;
+const iconv = require('iconv');
 
 async function getImageFrom(url) {
     const response = await Axios({
@@ -318,6 +321,53 @@ const getRealEstateType = title => {
     return result;
 };
 
+function getScraperConfiguration(linkToBeScraped) {
+    return {
+        uri: linkToBeScraped,
+        method: 'GET',
+        encoding: 'binary',
+        transform: function(body) {
+            body = Buffer.from(body, 'binary');
+            let conv = new iconv.Iconv('windows-1251', 'utf8');
+            body = conv.convert(body).toString();
+            return cheerio.load(body);
+        },
+    };
+}
+
+function convertPriceStringToNumber(originalCurrencyPrice) {
+    const temp = originalCurrencyPrice.replace(/[^0-9.-]+/g, '');
+    return parseFloat(temp);
+}
+
+const possibleCurrencies = {
+    euro: 'EUR',
+    leva: 'BGN',
+    dollar: 'USD',
+};
+
+function getOriginalCurrency(originalCurrencyPrice) {
+    if (originalCurrencyPrice.includes('лв')) {
+        return possibleCurrencies.leva;
+    } else if (originalCurrencyPrice.includes('EUR')) {
+        return possibleCurrencies.euro;
+    } else {
+        return possibleCurrencies.dollar;
+    }
+}
+
+function getPriceInEuro(originalCurrencyPrice) {
+    if (
+        getOriginalCurrency(originalCurrencyPrice) === possibleCurrencies.euro
+    ) {
+        return convertPriceStringToNumber(originalCurrencyPrice);
+    } else if (
+        getOriginalCurrency(originalCurrencyPrice) === possibleCurrencies.leva
+    ) {
+        return convertPriceStringToNumber(originalCurrencyPrice) * 2;
+    }
+}
+
 module.exports = {
     saveImageToS3Bucket,
     getRealEstateImageLinks,
@@ -325,6 +375,10 @@ module.exports = {
     getRealEstateNameIds,
     getRealEstateType,
     getRealEstateNeighborhood,
+    getScraperConfiguration,
+    getOriginalCurrency,
+    convertPriceStringToNumber,
+    getPriceInEuro,
 };
 
 function getImageName(link) {
