@@ -82,7 +82,7 @@ module.exports = function(app) {
                 allowNull: false,
             },
             real_estates_description: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT,
                 allowNull: false,
             },
             real_estates_imageNames: {
