@@ -1,17 +1,15 @@
 /* eslint-disable quotes */
 /* eslint-disable no-console */
-const puppeteer = require('puppeteer');
 const rp = require('request-promise');
 
 const {
-    getRealEstateImageLinks,
     getRealEstateNeighborhood,
-    getRealEstateNameIds,
     getRealEstateType,
     getScraperConfiguration,
     getPriceInEuro,
     getOriginalCurrency,
     convertPriceStringToNumber,
+    getRealEstateNameIds,
 } = require('./scraperHelpers');
 
 /* eslint-disable no-unused-vars */
@@ -124,12 +122,8 @@ exports.ScrapeLinksService = class ScrapeLinksService {
 
         const realEstateDescription = $('#description_div').text();
 
-        const photosLinks = await getRealEstateImageLinks(
-            puppeteer,
-            linkToBeScraped
-        );
-        // await uploadImagesToS3Bucket(photosLinks, realEstateId);
-        const photoIds = getRealEstateNameIds(photosLinks, realEstateId);
+        const thumbLinks = $('.thmbsLi img').toArray();
+        const photoIds = getRealEstateNameIds(thumbLinks);
         const createdBy = 'Manata';
 
         return {

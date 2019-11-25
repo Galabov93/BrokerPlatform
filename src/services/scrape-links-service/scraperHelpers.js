@@ -1,112 +1,13 @@
 /* eslint-disable no-console */
-const Axios = require('axios');
-const aws = require('aws-sdk');
 const cheerio = require('cheerio');
 const Buffer = require('buffer').Buffer;
 const iconv = require('iconv');
 
-async function getImageFrom(url) {
-    const response = await Axios({
-        url,
-        method: 'GET',
-        responseType: 'arraybuffer',
+function getRealEstateNameIds(thumbnailImages) {
+    let sources = Array.from(thumbnailImages).map(element => {
+        return element.attribs.src;
     });
-    return response.data;
-}
-
-async function saveImageToS3Bucket(url, newFolder = '', filename = 'newImage') {
-    const image = await getImageFrom(url);
-    const s3 = new aws.S3();
-    var params = {
-        Bucket: process.env.AMAZON_S3_BUCKET_NAME,
-        Key: `${newFolder}/${filename}`,
-        Body: image,
-    };
-    var putObjectPromise = s3.putObject(params).promise();
-    putObjectPromise
-        .then(function() {
-            // eslint-disable-next-line no-console
-            console.log('Success uploading photo to S3');
-        })
-        .catch(function(err) {
-            console.log(err);
-        });
-}
-
-async function getRealEstateImageLinks(puppeteer, linkToBeScraped) {
-    try {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-
-        await page.goto(linkToBeScraped, {
-            waitUntil: 'networkidle0',
-        });
-
-        const links = await page.evaluate(() => {
-            // eslint-disable-next-line no-undef
-            let thumbsLinks = document.querySelectorAll('.thmbsLi a'); //select image links
-            let arr = [];
-            for (let index = 0; index < thumbsLinks.length; index++) {
-                let thumbAndBigPhotoPair = { thumbPhoto: '', bigPhoto: '' };
-                // eslint-disable-next-line no-undef
-                const thumbPhoto = document
-                    .querySelector(`#small_pic_${index}`)
-                    .getAttribute('src');
-
-                //big photos are just with a different folder structure
-                const bigPhoto = thumbPhoto.replace('small', 'big');
-
-                thumbAndBigPhotoPair.thumbPhoto = `https:${thumbPhoto}`;
-                thumbAndBigPhotoPair.bigPhoto = `https:${bigPhoto}`;
-
-                arr.push(thumbAndBigPhotoPair);
-            }
-            return arr;
-        });
-
-        await browser.close();
-
-        return links;
-    } catch (e) {
-        console.error('Error getting puppeteer images', e);
-    }
-}
-
-/**
- * @param links[] - array of objects with the image https links
- * @param links[index].thumbPhoto - url link to thumb photo
- * @param links[index].bigPhoto - url link to bigPhoto
- */
-
-async function uploadImagesToS3Bucket(links, realEstateId) {
-    for (let index = 0; index < links.length; index++) {
-        const imageLinks = links[index];
-
-        const imageName = getImageName(imageLinks.thumbPhoto);
-
-        await saveImageToS3Bucket(
-            imageLinks.bigPhoto,
-            s3ImageFolderPath('big', realEstateId),
-            imageName
-        );
-    }
-}
-
-function getRealEstateNameIds(links) {
-    // thumbPhotos and bigPhotos
-    let photoIds = '';
-    for (let index = 0; index < links.length; index++) {
-        const imageLinks = links[index];
-
-        const imageName = getImageName(imageLinks.thumbPhoto);
-        if (index === links.length - 1) {
-            photoIds += `${imageName}`;
-        } else {
-            photoIds += `${imageName},`;
-        }
-    }
-
-    return photoIds;
+    return sources.map(el => getImageName(el)).join(',');
 }
 
 const getRealEstateNeighborhood = title => {
@@ -369,9 +270,6 @@ function getPriceInEuro(originalCurrencyPrice) {
 }
 
 module.exports = {
-    saveImageToS3Bucket,
-    getRealEstateImageLinks,
-    uploadImagesToS3Bucket,
     getRealEstateNameIds,
     getRealEstateType,
     getRealEstateNeighborhood,
@@ -387,8 +285,3 @@ function getImageName(link) {
         .pop()
         .split('.')[0];
 }
-
-const s3ImageFolderPath = (type, realEstateId) =>
-    type === 'thumb'
-        ? `${realEstateId}/thumbPhotos`
-        : `${realEstateId}/bigPhotos`;
