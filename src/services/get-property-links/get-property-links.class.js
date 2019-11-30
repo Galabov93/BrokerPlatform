@@ -60,7 +60,7 @@ exports.GetPropertyLinks = class GetPropertyLinks {
 
             let allLinks = [];
 
-            for (let index = 1; index <= 3; index++) {
+            for (let index = 1; index < 3; index++) {
                 let currentPageUrl = composeUrl(page.url(), index);
                 await page.goto(currentPageUrl, {
                     waitUntil: 'networkidle0',
@@ -75,11 +75,10 @@ exports.GetPropertyLinks = class GetPropertyLinks {
                 });
 
                 allLinks.push(...currentPageLinks);
-                console.log(allLinks);
             }
 
             await browser.close();
-            return 'Success';
+            return allLinks;
         } catch (error) {
             console.log('error puppet', error);
         }
