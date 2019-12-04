@@ -29,15 +29,34 @@ exports.ScrapeLinksService = class ScrapeLinksService {
             .find(element => element.includes('adv'))
             .split('=')[1];
 
-        const title = $('form')
-            .attr('name', 'search')
-            .children('table')
+        // get main title
+        const mainTitle = $('.imotData')
+            .parent()
+            .find('strong')
             .first()
-            .find('h1')
             .text();
 
-        const sellType = 'rent';
+        const subtitle = $('.imotData')
+            .parent()
+            .find('span')
+            .first()
+            .text();
+
+        const title = `${mainTitle},${subtitle}`;
+        // get subtitle
+
+        function getSellTtype(title) {
+            if (title.toLowerCase().includes('продава')) {
+                return 'sale';
+            } else {
+                return 'rent';
+            }
+        }
+
+        const sellType = getSellTtype(title);
+
         const constructionType = getRealEstateType(title);
+
         const neighborhood = getRealEstateNeighborhood(title);
 
         const city = title
@@ -50,45 +69,42 @@ exports.ScrapeLinksService = class ScrapeLinksService {
 
         const websiteSource = 'imot.bg';
 
-        // eslint-disable-next-line quotes
-        const squareFootageSize = $("td:contains('Квадратура')")
-            .last()
-            .next()
-            .children()
-            .text();
+        let squareFootageSize = '',
+            floor = '',
+            phone = '',
+            tec = '',
+            constructionMaterial = '';
 
-        // eslint-disable-next-line quotes
-        const floor = $("td:contains('Етаж')")
-            .last()
-            .next()
-            .children()
-            .text();
+        const imotDetails = $('.imotData').children('li');
+        imotDetails.each(index => {
+            if (index % 2 === 0) {
+                const typeKey = imotDetails.eq(index).text();
+                const typeValue = imotDetails.eq(index + 1).text();
+                if (typeKey.toLowerCase().includes('квадратура')) {
+                    squareFootageSize = typeValue;
+                }
+                if (typeKey.toLowerCase().includes('етаж')) {
+                    floor = typeValue;
+                }
+                if (typeKey.toLowerCase().includes('телефон')) {
+                    phone = typeValue;
+                }
+                if (typeKey.toLowerCase().includes('тeц:')) {
+                    console.log(
+                        'TCL: ScrapeLinksService -> find -> typeKey',
+                        typeKey
+                    );
+                    tec = typeValue;
+                }
+                if (typeKey.toLowerCase().includes('строителство')) {
+                    constructionMaterial = typeValue;
+                }
+            }
+        });
 
-        // eslint-disable-next-line quotes
-        const phone = $("td:contains('Телефон')")
-            .last()
-            .next()
-            .children()
-            .text();
-
-        // boolean tec
-        // eslint-disable-next-line quotes
-        const tec = $("td:contains('ТEЦ:')")
-            .last()
-            .next()
-            .children()
-            .text();
-
-        const constructionMaterial = $("td:contains('Вид строителство:')")
-            .last()
-            .next()
-            .children()
-            .text();
-
-        const phoneNumber = $("strong:contains('За контакти:')")
-            .next()
-            .next()
-            .text();
+        const phoneNumber = $('.phone')
+            .text()
+            .trim();
 
         let commaSeparatedFeaturesText = '';
         const featuresDivs = $("div:contains('Особености:')")
