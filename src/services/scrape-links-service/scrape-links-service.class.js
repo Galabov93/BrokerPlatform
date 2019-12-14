@@ -163,7 +163,7 @@ exports.ScrapeLinksService = class ScrapeLinksService {
             real_estates_description: realEstateDescription,
             real_estates_imageNames: photoIds,
             real_estates_seller_phone_number: phoneNumber,
-            real_estates_seller_features: commaSeparatedFeaturesText,
+            real_estates_seller_features: commaSeparatedFeaturesText.trim(),
             real_estates_website_source: websiteSource,
             real_estates_created_by: createdBy,
         };
