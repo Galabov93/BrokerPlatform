@@ -11,7 +11,7 @@ exports.GetPropertyLinks = class GetPropertyLinks {
     async find(params) {
         try {
             const browser = await puppeteer.launch({
-                headless: false,
+                headless: true,
             });
             const page = await browser.newPage();
             // we want to login to this page using credentials
