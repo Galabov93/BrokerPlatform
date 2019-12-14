@@ -11,6 +11,7 @@ module.exports = function(app) {
             real_estates_id: {
                 type: DataTypes.STRING,
                 allowNull: false,
+                unique: true,
             },
             real_estates_sell_type: {
                 // rent or by
