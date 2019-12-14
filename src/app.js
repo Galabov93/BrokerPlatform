@@ -16,7 +16,6 @@ const appHooks = require('./app.hooks');
 const channels = require('./channels');
 
 const sequelize = require('./sequelize');
-const queue = require('async/queue');
 
 const authentication = require('./authentication');
 require('./config/aws');
@@ -59,10 +58,7 @@ app.get(
                             linkToBeScraped,
                         });
 
-                    // upload to DB
-                    const uploadTable = await app
-                        .service('real-estates')
-                        .create(propertyData);
+                    await app.service('real-estates').create(propertyData); // upload to DB
 
                     const images = await app
                         .service('scrape-images-from-url')
