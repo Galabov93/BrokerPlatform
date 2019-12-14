@@ -60,7 +60,7 @@ exports.GetPropertyLinks = class GetPropertyLinks {
 
             let allLinks = [];
 
-            for (let index = 1; index < 3; index++) {
+            for (let index = 1; index < 2; index++) {
                 let currentPageUrl = composeUrl(page.url(), index);
                 await page.goto(currentPageUrl, {
                     waitUntil: 'networkidle0',
