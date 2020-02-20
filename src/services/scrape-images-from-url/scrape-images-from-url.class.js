@@ -17,6 +17,12 @@ exports.ScrapeImagesFromUrl = class ScrapeImagesFromUrl {
         const scraperOptions = getScraperConfiguration(linkToBeScraped);
         const $ = await rp(scraperOptions);
 
+        function addBigIfNoSpecifier(photoSrc) {
+            let splitArr = photoSrc.split('/');
+            splitArr.splice(splitArr.length - 1, 0, 'big');
+            return splitArr.join('/');
+        }
+
         let arr = [];
         $('#pictures_moving')
             .children('a')
@@ -32,7 +38,9 @@ exports.ScrapeImagesFromUrl = class ScrapeImagesFromUrl {
                     ? photoSrc.replace('small', 'big')
                     : photoSrc.includes('med')
                     ? photoSrc.replace('med', 'big')
-                    : photoSrc;
+                    : photoSrc.includes('big')
+                    ? photoSrc
+                    : addBigIfNoSpecifier(photoSrc);
 
                 arr.push(`https:${bigPhoto}`);
             });
