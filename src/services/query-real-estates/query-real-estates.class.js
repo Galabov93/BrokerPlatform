@@ -113,6 +113,7 @@ class Service {
                 ...priceFilter,
                 ...sizeFilter,
             },
+            order: [['id', 'DESC']],
         });
 
         return { count, rows };
