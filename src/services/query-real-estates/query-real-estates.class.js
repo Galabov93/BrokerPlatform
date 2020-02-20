@@ -55,7 +55,11 @@ class Service {
 
         function getPriceFilter(query) {
             const fromValue = Number(query.priceFrom) || 0;
-            const toValue = Number(query.priceTo) || 0;
+            let toValue = Number(query.priceTo) || 0;
+
+            if (fromValue > toValue) {
+                toValue = Number.MAX_SAFE_INTEGER;
+            }
 
             if (!toValue) {
                 return null;
@@ -70,9 +74,13 @@ class Service {
 
         function getSizeFilter(query) {
             const fromValue = Number(query.sizeFrom) || 0;
-            const toValue = Number(query.sizeTo) || 0;
+            let toValue = Number(query.sizeTo) || 0;
 
-            if (!toValue) {
+            if (fromValue > toValue) {
+                toValue = Number.MAX_SAFE_INTEGER;
+            }
+
+            if (!toValue && !fromValue) {
                 return null;
             } else {
                 return {
@@ -83,8 +91,9 @@ class Service {
             }
         }
 
-        const sizeFilter = getPriceFilter(query);
-        const priceFilter = getSizeFilter(query);
+        const priceFilter = getPriceFilter(query);
+        const sizeFilter = getSizeFilter(query);
+        console.log('TCL: Service -> find -> sizeFilter', sizeFilter);
         const sellTypeFilter = getRealEstatesSellType(query);
         const neighbourhoodsFilter = getNeighbourhoodFilter(
             query,
