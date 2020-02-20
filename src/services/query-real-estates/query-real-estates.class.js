@@ -93,7 +93,6 @@ class Service {
 
         const priceFilter = getPriceFilter(query);
         const sizeFilter = getSizeFilter(query);
-        console.log('TCL: Service -> find -> sizeFilter', sizeFilter);
         const sellTypeFilter = getRealEstatesSellType(query);
         const neighbourhoodsFilter = getNeighbourhoodFilter(
             query,
