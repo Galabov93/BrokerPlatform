@@ -12,6 +12,9 @@ exports.GetPropertyLinks = class GetPropertyLinks {
         try {
             const browser = await puppeteer.launch({
                 headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                ignoreHTTPSErrors: true,
+                dumpio: false,
             });
             const page = await browser.newPage();
             // we want to login to this page using credentials
@@ -44,7 +47,11 @@ exports.GetPropertyLinks = class GetPropertyLinks {
             });
 
             await Promise.all([
-                page.click('.startFilter'),
+                page.evaluate(() => {
+                    // eslint-disable-next-line no-undef
+                    document.querySelectorAll('.startFilter')[1].click();
+                }),
+                // page.click('.startFilter'),
                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
             ]);
 
@@ -60,7 +67,7 @@ exports.GetPropertyLinks = class GetPropertyLinks {
 
             let allLinks = [];
 
-            for (let index = 1; index < 2; index++) {
+            for (let index = 1; index < totalPages; index++) {
                 let currentPageUrl = composeUrl(page.url(), index);
                 await page.goto(currentPageUrl, {
                     waitUntil: 'networkidle0',
@@ -70,7 +77,7 @@ exports.GetPropertyLinks = class GetPropertyLinks {
                     const links = Array.from(
                         // eslint-disable-next-line no-undef
                         document.querySelectorAll('.photoLink')
-                    ).map(link => `https:${link.getAttribute('href')}`);
+                    ).map((link) => `https:${link.getAttribute('href')}`);
                     return links;
                 });
 
@@ -94,7 +101,7 @@ exports.GetPropertyLinks = class GetPropertyLinks {
     async create(data, params) {
         if (Array.isArray(data)) {
             return Promise.all(
-                data.map(current => this.create(current, params))
+                data.map((current) => this.create(current, params))
             );
         }
 

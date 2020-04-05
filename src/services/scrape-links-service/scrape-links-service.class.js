@@ -26,21 +26,13 @@ exports.ScrapeLinksService = class ScrapeLinksService {
 
         const realEstateId = linkToBeScraped
             .split('&')
-            .find(element => element.includes('adv'))
+            .find((element) => element.includes('adv'))
             .split('=')[1];
 
         // get main title
-        const mainTitle = $('.imotData')
-            .parent()
-            .find('strong')
-            .first()
-            .text();
+        const mainTitle = $('.imotData').parent().find('strong').first().text();
 
-        const subtitle = $('.imotData')
-            .parent()
-            .find('span')
-            .first()
-            .text();
+        const subtitle = $('.imotData').parent().find('span').first().text();
 
         const title = `${mainTitle},${subtitle}`;
         // get subtitle
@@ -59,13 +51,8 @@ exports.ScrapeLinksService = class ScrapeLinksService {
 
         const neighborhood = getRealEstateNeighborhood(title);
 
-        const city = title
-            .split(',')[1]
-            .replace('град', '')
-            .trim();
-        const address = $('h2:contains("Местоположение")')
-            .find('b')
-            .text();
+        const city = title.split(',')[1].replace('град', '').trim();
+        const address = $('h2:contains("Местоположение")').find('b').text();
 
         const websiteSource = 'imot.bg';
 
@@ -76,7 +63,7 @@ exports.ScrapeLinksService = class ScrapeLinksService {
             constructionMaterial = '';
 
         const imotDetails = $('.imotData').children('li');
-        imotDetails.each(index => {
+        imotDetails.each((index) => {
             if (index % 2 === 0) {
                 const typeKey = imotDetails.eq(index).text();
                 const typeValue = imotDetails.eq(index + 1).text();
@@ -90,10 +77,6 @@ exports.ScrapeLinksService = class ScrapeLinksService {
                     phone = typeValue;
                 }
                 if (typeKey.toLowerCase().includes('тeц:')) {
-                    console.log(
-                        'TCL: ScrapeLinksService -> find -> typeKey',
-                        typeKey
-                    );
                     tec = typeValue;
                 }
                 if (typeKey.toLowerCase().includes('строителство')) {
@@ -102,9 +85,7 @@ exports.ScrapeLinksService = class ScrapeLinksService {
             }
         });
 
-        const phoneNumber = $('.phone')
-            .text()
-            .trim();
+        const phoneNumber = $('.phone').text().trim();
 
         let commaSeparatedFeaturesText = '';
         const featuresDivs = $("div:contains('Особености:')")
@@ -114,7 +95,7 @@ exports.ScrapeLinksService = class ScrapeLinksService {
             .children()
             .children()
             .children();
-        featuresDivs.each(function(index) {
+        featuresDivs.each(function (index) {
             if (index !== featuresDivs.length - 1) {
                 commaSeparatedFeaturesText += `${$(this)
                     .text()
@@ -126,12 +107,8 @@ exports.ScrapeLinksService = class ScrapeLinksService {
             }
         });
 
-        const totalPrice = $('#cena')
-            .text()
-            .trim();
-        const pricePerSquareMeter = $('#cenakv')
-            .text()
-            .trim();
+        const totalPrice = $('#cena').text().trim();
+        const pricePerSquareMeter = $('#cenakv').text().trim();
 
         const totalPriceInEuro = getPriceInEuro(totalPrice);
         const pricePerSquareMeterInEuro = getPriceInEuro(pricePerSquareMeter);
@@ -179,7 +156,7 @@ exports.ScrapeLinksService = class ScrapeLinksService {
     async create(data, params) {
         if (Array.isArray(data)) {
             return Promise.all(
-                data.map(current => this.create(current, params))
+                data.map((current) => this.create(current, params))
             );
         }
 

@@ -20,6 +20,7 @@ exports.UploadImageToCloud = class UploadImageToCloud {
                 filename: imageName,
             });
         }
+        return;
     }
 
     async create(data, params) {
@@ -31,16 +32,7 @@ exports.UploadImageToCloud = class UploadImageToCloud {
             Key: `${folderName}/${filename}`,
             Body: image,
         };
-        const putObjectPromise = s3.putObject(s3Params).promise();
-        putObjectPromise
-            .then(function() {
-                // eslint-disable-next-line no-console
-                console.log('Success uploading photo to S3');
-            })
-            .catch(function(err) {
-                // eslint-disable-next-line no-console
-                console.log(err);
-            });
+        await s3.putObject(s3Params).promise();
     }
 };
 
@@ -54,8 +46,5 @@ async function getImageFrom(url) {
 }
 
 function getImageName(link) {
-    return link
-        .split('/')
-        .pop()
-        .split('.')[0];
+    return link.split('/').pop().split('.')[0];
 }

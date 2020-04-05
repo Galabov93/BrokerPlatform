@@ -34,7 +34,7 @@ app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 // Host the public folder
 app.use('/', express.static(app.get('public')));
 
-const asyncMiddleware = fn => (req, res, next) => {
+const asyncMiddleware = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
 };
 
@@ -71,7 +71,7 @@ app.get(
                         realEstateId: propertyData.real_estates_id,
                     });
                 } catch (e) {
-                    console.log('Error in property creation', e);
+                    console.log('Error in property creation', e.message);
                 }
             }
 

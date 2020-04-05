@@ -1,64 +1,64 @@
 {
-  "name": "broker-platform",
-  "description": "platform for real estate agents",
-  "version": "0.0.0",
-  "homepage": "",
-  "main": "src",
-  "keywords": [
-    "feathers"
-  ],
-  "author": {
-    "name": "Yordan Galabov",
-    "email": "galabovj@gmail.com"
-  },
-  "contributors": [],
-  "bugs": {},
-  "directories": {
-    "lib": "src",
-    "test": "test/",
-    "config": "config/"
-  },
-  "engines": {
-    "node": "^10.0.0",
-    "npm": ">= 3.0.0"
-  },
-  "scripts": {
-    "test": "npm run eslint && NODE_ENV= npm run jest",
-    "eslint": "eslint src/. test/. --config .eslintrc.json",
-    "dev": "nodemon src/",
-    "start": "node src/",
-    "jest": "jest"
-  },
-  "dependencies": {
-    "@feathersjs/authentication": "^2.1.16",
-    "@feathersjs/authentication-jwt": "^2.0.10",
-    "@feathersjs/authentication-local": "^1.2.9",
-    "@feathersjs/configuration": "^2.0.6",
-    "@feathersjs/errors": "^3.3.6",
-    "@feathersjs/express": "^1.3.1",
-    "@feathersjs/feathers": "^3.3.1",
-    "async": "^3.1.0",
-    "aws-sdk": "^2.486.0",
-    "axios": "^0.19.0",
-    "cheerio": "^1.0.0-rc.3",
-    "compression": "^1.7.4",
-    "cors": "^2.8.5",
-    "dotenv": "^8.0.0",
-    "feathers-sequelize": "^4.1.1",
-    "helmet": "^3.21.2",
-    "iconv": "^2.3.4",
-    "mysql2": "^1.6.5",
-    "puppeteer": "^1.18.0",
-    "request-promise-native": "^1.0.7",
-    "sequelize": "^6.0.0",
-    "serve-favicon": "^2.5.0",
-    "winston": "^3.1.0"
-  },
-  "devDependencies": {
-    "eslint": "^5.16.0",
-    "jest": "^24.8.0",
-    "nodemon": "^1.19.1",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.4"
-  }
+    "name": "broker-platform",
+    "description": "platform for real estate agents",
+    "version": "0.0.0",
+    "homepage": "",
+    "main": "src",
+    "keywords": [
+        "feathers"
+    ],
+    "author": {
+        "name": "Yordan Galabov",
+        "email": "galabovj@gmail.com"
+    },
+    "contributors": [],
+    "bugs": {},
+    "directories": {
+        "lib": "src",
+        "test": "test/",
+        "config": "config/"
+    },
+    "engines": {
+        "node": "^10.0.0",
+        "npm": ">= 3.0.0"
+    },
+    "scripts": {
+        "test": "npm run eslint && NODE_ENV= npm run jest",
+        "eslint": "eslint src/. test/. --config .eslintrc.json",
+        "dev": "nodemon src/",
+        "start": "node src/",
+        "jest": "jest"
+    },
+    "dependencies": {
+        "@feathersjs/authentication": "^2.1.16",
+        "@feathersjs/authentication-jwt": "^2.0.10",
+        "@feathersjs/authentication-local": "^1.2.9",
+        "@feathersjs/configuration": "^2.0.6",
+        "@feathersjs/errors": "^3.3.6",
+        "@feathersjs/express": "^1.3.1",
+        "@feathersjs/feathers": "^3.3.1",
+        "async": "^3.1.0",
+        "aws-sdk": "^2.486.0",
+        "axios": "^0.19.0",
+        "cheerio": "^1.0.0-rc.3",
+        "compression": "^1.7.4",
+        "cors": "^2.8.5",
+        "dotenv": "^8.0.0",
+        "feathers-sequelize": "^4.1.1",
+        "helmet": "^3.21.2",
+        "iconv": "^2.3.4",
+        "mysql2": "^1.6.5",
+        "puppeteer": "^1.18.0",
+        "request-promise-native": "^1.0.7",
+        "sequelize": "^5.21.5",
+        "serve-favicon": "^2.5.0",
+        "winston": "^3.1.0"
+    },
+    "devDependencies": {
+        "eslint": "^5.16.0",
+        "jest": "^24.8.0",
+        "nodemon": "^1.19.1",
+        "request": "^2.88.0",
+        "request-promise": "^4.2.4"
+    }
 }
