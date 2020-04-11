@@ -10,6 +10,11 @@ exports.GetPropertyLinks = class GetPropertyLinks {
 
     async find(params) {
         try {
+            const { filterNumber } = params;
+            console.log(
+                'GetPropertyLinks -> find -> filterNumber',
+                filterNumber
+            );
             const browser = await puppeteer.launch({
                 headless: true,
                 args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -47,23 +52,25 @@ exports.GetPropertyLinks = class GetPropertyLinks {
             });
 
             await Promise.all([
-                page.evaluate(() => {
+                page.evaluate((filterNumber) => {
                     // eslint-disable-next-line no-undef
-                    document.querySelectorAll('.startFilter')[1].click();
-                }),
-                // page.click('.startFilter'),
+                    document
+                        .querySelectorAll('.startFilter')
+                        [filterNumber].click();
+                }, filterNumber),
                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
             ]);
 
-            const totalPages = await page.evaluate(() => {
-                return Number(
-                    // eslint-disable-next-line no-undef
-                    document
-                        .querySelector('.pageNumbersInfo')
-                        .innerHTML.split('от')[1]
-                        .trim()
-                );
-            });
+            // const totalPages = await page.evaluate(() => {
+            //     return Number(
+            //         // eslint-disable-next-line no-undef
+            //         document
+            //             .querySelector('.pageNumbersInfo')
+            //             .innerHTML.split('от')[1]
+            //             .trim()
+            //     );
+            // });
+            const totalPages = 5;
 
             let allLinks = [];
 

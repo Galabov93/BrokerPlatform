@@ -34,54 +34,6 @@ app.use(favicon(path.join(app.get('public'), 'favicon.ico')));
 // Host the public folder
 app.use('/', express.static(app.get('public')));
 
-const asyncMiddleware = (fn) => (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-};
-
-// run the cronjob here
-app.get(
-    '/testScraper',
-    asyncMiddleware(async (req, res) => {
-        try {
-            const linksForScraping = await app
-                .service('get-property-links')
-                .find();
-
-            for (let index = 0; index < linksForScraping.length; index++) {
-                try {
-                    const linkToBeScraped = linksForScraping[index];
-
-                    //get data
-                    const propertyData = await app
-                        .service('scrape-links-service')
-                        .find({
-                            linkToBeScraped,
-                        });
-
-                    await app.service('real-estates').create(propertyData); // upload to DB
-
-                    const images = await app
-                        .service('scrape-images-from-url')
-                        .create({
-                            linkToBeScraped,
-                        });
-
-                    await app.service('upload-image-to-cloud').uploadAllImages({
-                        links: images,
-                        realEstateId: propertyData.real_estates_id,
-                    });
-                } catch (e) {
-                    console.log('Error in property creation', e.message);
-                }
-            }
-
-            res.send('Success');
-        } catch (error) {
-            console.error('Error scraping individual page');
-        }
-    })
-);
-
 // Set up Plugins and providers
 app.configure(express.rest());
 app.configure(sequelize);
