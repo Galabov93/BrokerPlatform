@@ -3,7 +3,7 @@
 const Sequelize = require('sequelize');
 const DataTypes = Sequelize.DataTypes;
 
-module.exports = function(app) {
+module.exports = function (app) {
     const sequelizeClient = app.get('sequelizeClient');
     const realEstates = sequelizeClient.define(
         'real_estates',
@@ -117,9 +117,14 @@ module.exports = function(app) {
     );
 
     // eslint-disable-next-line no-unused-vars
-    realEstates.associate = function(models) {
-        // Define associations here
+    realEstates.associate = function (models) {
         // See http://docs.sequelizejs.com/en/latest/docs/associations/
+        const { notes } = models;
+        realEstates.hasMany(notes, {
+            foreignKey: {
+                allowNull: false,
+            },
+        });
     };
 
     return realEstates;

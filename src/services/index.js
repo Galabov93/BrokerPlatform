@@ -5,6 +5,7 @@ const getPropertyLinks = require('./get-property-links/get-property-links.servic
 const scrapeLinksService = require('./scrape-links-service/scrape-links-service.service.js');
 const uploadImageToCloud = require('./upload-image-to-cloud/upload-image-to-cloud.service.js');
 const scrapeImagesFromUrl = require('./scrape-images-from-url/scrape-images-from-url.service.js');
+const notes = require('./notes/notes.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function(app) {
     app.configure(realEstates);
@@ -14,4 +15,5 @@ module.exports = function(app) {
     app.configure(scrapeLinksService);
     app.configure(uploadImageToCloud);
     app.configure(scrapeImagesFromUrl);
+    app.configure(notes);
 };

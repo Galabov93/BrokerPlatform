@@ -5,15 +5,10 @@ const DataTypes = Sequelize.DataTypes;
 
 module.exports = function (app) {
     const sequelizeClient = app.get('sequelizeClient');
-    const users = sequelizeClient.define(
-        'users',
+    const notes = sequelizeClient.define(
+        'notes',
         {
-            email: {
-                type: DataTypes.STRING,
-                allowNull: false,
-                unique: true,
-            },
-            password: {
+            text: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
@@ -28,16 +23,13 @@ module.exports = function (app) {
     );
 
     // eslint-disable-next-line no-unused-vars
-    users.associate = function (models) {
+    notes.associate = function (models) {
+        const { users, real_estates } = models;
+        notes.belongsTo(real_estates);
+        notes.belongsTo(users);
         // Define associations here
         // See http://docs.sequelizejs.com/en/latest/docs/associations/
-        const { notes } = models;
-        users.hasMany(notes, {
-            foreignKey: {
-                allowNull: false,
-            },
-        });
     };
 
-    return users;
+    return notes;
 };
